@@ -56,9 +56,6 @@
             <div id="cases-editor" class="cases-editor"></div>
           </div>
 
-          <div class="form-actions">
-            <button type="submit">Запустить тесты</button>
-          </div>
           <p id="form-error" class="form-error" role="alert" hidden></p>
         </form>
       </div>
@@ -82,6 +79,25 @@
         </div>
       </section>
     </div>
+
+    <details class="expression-help">
+      <summary>Справка по выражениям</summary>
+      <div class="help-grid">
+        <div>
+          <strong><code>&amp;&amp;</code> — логическое И</strong>
+          <p>Результат <code>true</code>, только если обе части истинны. Если слева <code>false</code>, правая часть не вычисляется.</p>
+        </div>
+        <div>
+          <strong><code>||</code> — логическое ИЛИ</strong>
+          <p>Результат <code>true</code>, если истинна хотя бы одна часть. Если слева <code>true</code>, правая часть не вычисляется.</p>
+        </div>
+        <div>
+          <strong>Приоритет операторов</strong>
+          <p><code>()</code> → <code>!</code> → сравнения → <code>&amp;&amp;</code> → <code>||</code>.</p>
+          <p>Например, <code>a || b &amp;&amp; !c</code> означает <code>a || (b &amp;&amp; !c)</code>.</p>
+        </div>
+      </div>
+    </details>
   </main>
   <div id="expression-tooltip" class="expression-tooltip" role="tooltip" hidden></div>
 </body>

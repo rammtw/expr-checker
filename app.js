@@ -287,6 +287,44 @@ function renderCaseEditor() {
 
     const header = document.createElement("summary");
     header.className = "case-header";
+    const dragHandle = document.createElement("span");
+    dragHandle.className = "case-drag-handle";
+    dragHandle.textContent = "⋮⋮";
+    dragHandle.draggable = true;
+    dragHandle.title = "Перетащить кейс";
+    dragHandle.setAttribute("aria-label", "Перетащить кейс");
+    dragHandle.addEventListener("click", (event) => {
+      event.preventDefault();
+      event.stopPropagation();
+    });
+    dragHandle.addEventListener("dragstart", (event) => {
+      event.dataTransfer.setData("text/plain", String(caseIndex));
+      event.dataTransfer.effectAllowed = "move";
+      card.classList.add("is-dragging");
+    });
+    dragHandle.addEventListener("dragend", () => {
+      card.classList.remove("is-dragging");
+      casesEditor.querySelectorAll(".drag-over").forEach((element) => element.classList.remove("drag-over"));
+    });
+
+    card.addEventListener("dragover", (event) => {
+      event.preventDefault();
+      event.dataTransfer.dropEffect = "move";
+      card.classList.add("drag-over");
+    });
+    card.addEventListener("dragleave", (event) => {
+      if (!card.contains(event.relatedTarget)) {
+        card.classList.remove("drag-over");
+      }
+    });
+    card.addEventListener("drop", (event) => {
+      event.preventDefault();
+      const sourceIndex = Number(event.dataTransfer.getData("text/plain"));
+      if (Number.isInteger(sourceIndex) && sourceIndex !== caseIndex) {
+        moveCase(sourceIndex, caseIndex);
+      }
+    });
+
     const title = document.createElement("span");
     title.className = "case-title";
     title.textContent = `Кейс ${caseIndex + 1}`;
@@ -294,29 +332,9 @@ function renderCaseEditor() {
     summaryName.className = "case-summary-name";
     summaryName.textContent = testCase.name || "Без названия";
 
-    const moveUp = createEditorButton("↑", "secondary small case-move", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      moveCase(caseIndex, caseIndex - 1);
-    });
-    moveUp.disabled = caseIndex === 0;
-    moveUp.title = "Переместить кейс вверх";
-    moveUp.setAttribute("aria-label", "Переместить кейс вверх");
-
-    const moveDown = createEditorButton("↓", "secondary small case-move", (event) => {
-      event.preventDefault();
-      event.stopPropagation();
-      moveCase(caseIndex, caseIndex + 1);
-    });
-    moveDown.disabled = caseIndex === editorCases.length - 1;
-    moveDown.title = "Переместить кейс вниз";
-    moveDown.setAttribute("aria-label", "Переместить кейс вниз");
-
     const actions = document.createElement("span");
     actions.className = "case-actions";
     actions.append(
-      moveUp,
-      moveDown,
       createEditorButton("Удалить", "secondary small danger", (event) => {
         event.preventDefault();
         event.stopPropagation();
@@ -325,7 +343,7 @@ function renderCaseEditor() {
         handleEditorChange();
       })
     );
-    header.append(title, summaryName, actions);
+    header.append(dragHandle, title, summaryName, actions);
 
     const content = document.createElement("div");
     content.className = "case-content";
@@ -566,14 +584,17 @@ function showExpressionTooltip(target) {
   expressionTooltip.style.top = `${above >= 8 ? above : targetRect.bottom + 8}px`;
 }
 
-resultsBody.addEventListener("pointerover", (event) => {
+function handleExpressionPointer(event) {
   const node = event.target.closest(".expression-node");
   if (node) {
     showExpressionTooltip(node);
   } else {
     hideExpressionTooltip();
   }
-});
+}
+
+resultsBody.addEventListener("pointerover", handleExpressionPointer);
+resultsBody.addEventListener("pointermove", handleExpressionPointer);
 resultsBody.addEventListener("pointerleave", hideExpressionTooltip);
 resultsBody.addEventListener("focusin", (event) => {
   const node = event.target.closest(".expression-node");
