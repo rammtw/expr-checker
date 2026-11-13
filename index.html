@@ -1,0 +1,88 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Boolean Test</title>
+  <link rel="stylesheet" href="styles.css">
+  <script src="expression.js" defer></script>
+  <script src="app.js" defer></script>
+</head>
+<body>
+  <main class="container">
+    <header>
+      <h1>Boolean Test</h1>
+      <p>Мини-PHPUnit для булевых выражений</p>
+    </header>
+
+    <div class="workspace">
+      <div class="controls">
+        <section class="test-manager" aria-label="Управление тестами">
+          <div class="test-picker">
+            <label for="test-select">Тест</label>
+            <select id="test-select"></select>
+          </div>
+          <div class="test-buttons">
+            <button id="new-test" class="secondary" type="button">Новый</button>
+            <button id="delete-test" class="secondary danger" type="button">Удалить</button>
+          </div>
+          <p id="save-status" class="save-status">Изменения сохраняются автоматически.</p>
+        </section>
+
+        <form id="test-form">
+          <div class="field">
+            <label for="test-name">Название</label>
+            <input id="test-name" type="text" autocomplete="off">
+          </div>
+
+          <div class="field">
+            <label for="expression">Выражение</label>
+            <input
+              id="expression"
+              type="text"
+              value="(isAdmin || isOwner) &amp;&amp; !isBanned"
+              spellcheck="false"
+              autocomplete="off"
+              required
+            >
+            <small>Доступны <code>!</code>, <code>&amp;&amp;</code>, <code>||</code>, <code>==</code>, <code>!=</code>, <code>===</code>, <code>!==</code>, <code>&gt;</code>, <code>&lt;</code>, <code>&gt;=</code>, <code>&lt;=</code>, скобки, числа и строки.</small>
+          </div>
+
+          <div class="field">
+            <div class="provider-heading">
+              <span class="field-title">Data provider</span>
+              <button id="add-case" class="secondary small" type="button">Добавить кейс</button>
+            </div>
+            <div id="cases-editor" class="cases-editor"></div>
+          </div>
+
+          <div class="form-actions">
+            <button type="submit">Запустить тесты</button>
+          </div>
+          <p id="form-error" class="form-error" role="alert" hidden></p>
+        </form>
+      </div>
+
+      <section id="results" aria-live="polite">
+        <h2>Результат</h2>
+        <p id="summary" class="summary">Тесты ещё не запускались.</p>
+        <div id="table-wrapper" class="table-wrapper" hidden>
+          <table>
+            <thead>
+              <tr>
+                <th>Кейс</th>
+                <th>Ожидается</th>
+                <th>Фактически</th>
+                <th>Разбор выражения</th>
+                <th>Статус</th>
+              </tr>
+            </thead>
+            <tbody id="results-body"></tbody>
+          </table>
+        </div>
+      </section>
+    </div>
+  </main>
+  <div id="expression-tooltip" class="expression-tooltip" role="tooltip" hidden></div>
+</body>
+</html>
